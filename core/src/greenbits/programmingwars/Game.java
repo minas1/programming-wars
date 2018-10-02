@@ -17,8 +17,9 @@ public class Game extends ApplicationAdapter {
 	Texture img;
 
     private ShapeRenderer shapeRenderer;
-
     private Camera camera;
+
+    private GridCalculator gridCalculator;
 
 	@Override
 	public void create() {
@@ -31,6 +32,11 @@ public class Game extends ApplicationAdapter {
         camera = new OrthographicCamera(calculateViewportWidth(), calculateViewportHeight());
         camera.position.set(camera.viewportWidth / 2f, camera.viewportHeight / 2f, 0);
         camera.update();
+
+        gridCalculator = new GridCalculator(GRID_SIZE);
+        float cellDimensions = (MIN_VIEWPORT_DIMENSION - 2f) / GRID_SIZE;
+        gridCalculator.setCellDimensions(cellDimensions);
+        gridCalculator.setOrigin(1f, 1f);
 	}
 
 	private float calculateViewportWidth() {
@@ -76,8 +82,7 @@ public class Game extends ApplicationAdapter {
 	    Gdx.gl.glClearColor(1, 0, 0, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-        float cellDimensions = (MIN_VIEWPORT_DIMENSION - 2f) / GRID_SIZE;
-        drawGrid(1f, 1f, cellDimensions);
+        drawGrid();
 
 //		batch.begin();
 ////		batch.draw(img, 0, 0);
@@ -86,33 +91,28 @@ public class Game extends ApplicationAdapter {
 
 	private static final int GRID_SIZE = 20;
 
-	private void drawGrid(float x, float y, float cellDimensions) {
+	private void drawGrid() {
 
 	    shapeRenderer.setProjectionMatrix(camera.combined);
         shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
 
         // horizontal
-//        System.out.println("--------");
         for (int i = 0; i < GRID_SIZE + 1; ++i) {
 
-            float lineY = y + i * cellDimensions;
-
-//            System.out.println("y = " + lineY);
-
-            shapeRenderer.line(x, lineY, x + GRID_SIZE * cellDimensions, lineY);
+            float lineY = gridCalculator.getY(i);
+            shapeRenderer.line(gridCalculator.getOriginX(), lineY, gridCalculator.getX(GRID_SIZE), lineY);
         }
-//        System.out.println("--------");
 
         // vertical
         for (int i = 0; i < GRID_SIZE + 1; ++i) {
 
-            float lineX = x + i * cellDimensions;
-            shapeRenderer.line(lineX, y, lineX, y + GRID_SIZE * cellDimensions);
+            float lineX = gridCalculator.getX(i);
+            shapeRenderer.line(lineX, gridCalculator.getOriginY(), lineX, gridCalculator.getY(GRID_SIZE));
         }
 
         shapeRenderer.end();
     }
-	
+
 	@Override
 	public void dispose() {
 
