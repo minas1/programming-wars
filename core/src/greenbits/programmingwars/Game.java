@@ -84,9 +84,10 @@ public class Game extends ApplicationAdapter {
 
         drawGrid();
 
-//		batch.begin();
-////		batch.draw(img, 0, 0);
-//		batch.end();
+        batch.setProjectionMatrix(camera.combined);
+		batch.begin();
+		batch.draw(img, gridCalculator.getX(2), gridCalculator.getY(5), gridCalculator.getCellDimensions(), gridCalculator.getCellDimensions());
+		batch.end();
 	}
 
 	private static final int GRID_SIZE = 20;

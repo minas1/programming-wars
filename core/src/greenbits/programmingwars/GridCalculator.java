@@ -22,11 +22,6 @@ public class GridCalculator {
         this.originY = originY;
     }
 
-    public void setCellDimensions(float cellDimensions) {
-
-        this.cellDimensions = cellDimensions;
-    }
-
     public float getOriginX() {
 
         return originX;
@@ -37,6 +32,16 @@ public class GridCalculator {
         return originY;
     }
 
+    public void setCellDimensions(float cellDimensions) {
+
+        this.cellDimensions = cellDimensions;
+    }
+
+    public float getCellDimensions() {
+
+        return cellDimensions;
+    }
+
     public float getX(int column) {
 
         return originX + column * cellDimensions;
@@ -45,5 +50,15 @@ public class GridCalculator {
     public float getY(int column) {
 
         return originY + column * cellDimensions;
+    }
+
+    public float getCenterX(int column) {
+
+        return getX(column) + cellDimensions * 0.5f;
+    }
+
+    public float getCenterY(int column) {
+
+        return getY(column) + cellDimensions * 0.5f;
     }
 }
