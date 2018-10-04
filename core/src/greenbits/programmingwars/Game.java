@@ -10,9 +10,13 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 
+import greenbits.programmingwars.board.Board;
+
 public class Game extends ApplicationAdapter {
 
     private static final float MIN_VIEWPORT_DIMENSION = 100f;
+
+    private static final int GRID_SIZE = 10;
 
 	private SpriteBatch batch;
 	private Texture img;
@@ -20,7 +24,8 @@ public class Game extends ApplicationAdapter {
     private ShapeRenderer shapeRenderer;
     private Camera camera;
 
-    private GridCalculator gridCalculator;
+    private Board board = new Board(GRID_SIZE);
+    private GridToWorldUnitsConverter gridToWorldUnitsConverter;
 
 	@Override
 	public void create() {
@@ -34,10 +39,10 @@ public class Game extends ApplicationAdapter {
         camera.position.set(camera.viewportWidth / 2f, camera.viewportHeight / 2f, 0);
         camera.update();
 
-        gridCalculator = new GridCalculator(GRID_SIZE);
+        gridToWorldUnitsConverter = new GridToWorldUnitsConverter(GRID_SIZE);
         float cellDimensions = (MIN_VIEWPORT_DIMENSION - 2f) / GRID_SIZE;
-        gridCalculator.setCellDimensions(cellDimensions);
-        gridCalculator.setOrigin(1f, 1f);
+        gridToWorldUnitsConverter.setCellDimensions(cellDimensions);
+        gridToWorldUnitsConverter.setOrigin(1f, 1f);
 	}
 
 	private float calculateViewportWidth() {
@@ -88,11 +93,9 @@ public class Game extends ApplicationAdapter {
 
         batch.setProjectionMatrix(camera.combined);
 		batch.begin();
-		batch.draw(img, gridCalculator.getX(2), gridCalculator.getY(5), gridCalculator.getCellDimensions(), gridCalculator.getCellDimensions());
+		batch.draw(img, gridToWorldUnitsConverter.getX(2), gridToWorldUnitsConverter.getY(5), gridToWorldUnitsConverter.getCellDimensions(), gridToWorldUnitsConverter.getCellDimensions());
 		batch.end();
 	}
-
-	private static final int GRID_SIZE = 10;
 
 	private void drawGrid() {
 
@@ -102,15 +105,15 @@ public class Game extends ApplicationAdapter {
         // horizontal
         for (int i = 0; i < GRID_SIZE + 1; ++i) {
 
-            float lineY = gridCalculator.getY(i);
-            shapeRenderer.line(gridCalculator.getOriginX(), lineY, gridCalculator.getX(GRID_SIZE), lineY);
+            float lineY = gridToWorldUnitsConverter.getY(i);
+            shapeRenderer.line(gridToWorldUnitsConverter.getOriginX(), lineY, gridToWorldUnitsConverter.getX(GRID_SIZE), lineY);
         }
 
         // vertical
         for (int i = 0; i < GRID_SIZE + 1; ++i) {
 
-            float lineX = gridCalculator.getX(i);
-            shapeRenderer.line(lineX, gridCalculator.getOriginY(), lineX, gridCalculator.getY(GRID_SIZE));
+            float lineX = gridToWorldUnitsConverter.getX(i);
+            shapeRenderer.line(lineX, gridToWorldUnitsConverter.getOriginY(), lineX, gridToWorldUnitsConverter.getY(GRID_SIZE));
         }
 
         shapeRenderer.end();

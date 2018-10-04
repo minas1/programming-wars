@@ -3,7 +3,7 @@ package greenbits.programmingwars;
 /**
  * Helps with the conversion between grid rows / columns to world units.
  */
-public class GridCalculator {
+public class GridToWorldUnitsConverter {
 
     private final int gridSize;
 
@@ -11,7 +11,7 @@ public class GridCalculator {
     private float originY;
     private float cellDimensions;
 
-    public GridCalculator(int gridSize) {
+    public GridToWorldUnitsConverter(int gridSize) {
 
         this.gridSize = gridSize;
     }
