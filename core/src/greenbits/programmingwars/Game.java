@@ -11,6 +11,8 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 
 import greenbits.programmingwars.board.Board;
+import greenbits.programmingwars.board.objects.Pawn;
+import greenbits.programmingwars.board.objects.Trail;
 
 public class Game extends ApplicationAdapter {
 
@@ -69,6 +71,16 @@ public class Game extends ApplicationAdapter {
         else {
             return MIN_VIEWPORT_DIMENSION;
         }
+    }
+
+    private void setUpBoard() {
+
+        Pawn player0 = new Pawn("Player 1", new Trail());
+        Pawn player1 = new Pawn("Player 2", new Trail());
+        Pawn player2 = new Pawn("Player 3", new Trail());
+        Pawn player4 = new Pawn("Player 4", new Trail());
+
+        // TODO put players on the board
     }
 
     @Override
