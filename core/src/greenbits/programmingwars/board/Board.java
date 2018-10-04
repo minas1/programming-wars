@@ -1,18 +1,20 @@
 package greenbits.programmingwars.board;
 
+import greenbits.programmingwars.board.objects.BoardObject;
+
 public class Board {
 
     private final int boardSize;
 
-    private final int[] board;
+    private final BoardObject[] board;
 
     public Board(int boardSize) {
 
         this.boardSize = boardSize;
-        board = new int[boardSize * boardSize];
+        board = new BoardObject[boardSize * boardSize];
     }
 
-    public int getElement(int row, int column) {
+    public BoardObject getElement(int row, int column) {
 
         validateDimension("row", row);
         validateDimension("column", column);
@@ -21,7 +23,7 @@ public class Board {
         return board[index];
     }
 
-    public void setElement(int row, int column, int element) {
+    public void setElement(int row, int column, BoardObject element) {
 
         validateDimension("row", row);
         validateDimension("column", column);
