@@ -90,7 +90,7 @@ public class Game extends ApplicationAdapter {
 		batch.end();
 	}
 
-	private static final int GRID_SIZE = 20;
+	private static final int GRID_SIZE = 10;
 
 	private void drawGrid() {
 
