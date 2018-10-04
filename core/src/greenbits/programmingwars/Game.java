@@ -3,6 +3,7 @@ package greenbits.programmingwars;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Camera;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
@@ -13,8 +14,8 @@ public class Game extends ApplicationAdapter {
 
     private static final float MIN_VIEWPORT_DIMENSION = 100f;
 
-	SpriteBatch batch;
-	Texture img;
+	private SpriteBatch batch;
+	private Texture img;
 
     private ShapeRenderer shapeRenderer;
     private Camera camera;
@@ -79,7 +80,8 @@ public class Game extends ApplicationAdapter {
 
 	    camera.update();
 
-	    Gdx.gl.glClearColor(1, 0, 0, 1);
+	    Color clearColor = Color.ROYAL;
+	    Gdx.gl.glClearColor(clearColor.r, clearColor.g, clearColor.b, clearColor.a);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         drawGrid();
