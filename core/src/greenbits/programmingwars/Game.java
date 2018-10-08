@@ -7,11 +7,16 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -22,8 +27,10 @@ import greenbits.programmingwars.board.objects.Trail;
 
 public class Game extends ApplicationAdapter {
 
-    private static final float MIN_VIEWPORT_DIMENSION = 100f;
+    private static final float MIN_VIEWPORT_DIMENSION = 1000f;
     private static final int GRID_SIZE = 10;
+
+    private static final float BOARD_MARGIN = MIN_VIEWPORT_DIMENSION / 100f;
 
     private static final Color PLAYER_0_PAWN_COLOR = Color.RED;
     private static final Color PLAYER_1_PAWN_COLOR = Color.GREEN;
@@ -35,11 +42,14 @@ public class Game extends ApplicationAdapter {
     private static final Color PLAYER_2_TRAIL_COLOR = Color.valueOf("#B0E0E6"); // powder blue
     private static final Color PLAYER_3_TRAIL_COLOR = Color.valueOf("#F5DEB3"); // light yellow
 
+    private final Map<Pawn, Color> pawnColors;
+
 	private SpriteBatch batch;
 	private Texture img;
 
     private ShapeRenderer shapeRenderer;
     private Camera camera;
+    private BitmapFont font;
 
     private Board board = new Board(GRID_SIZE);
     private GridToWorldUnitsConverter gridToWorldUnitsConverter;
@@ -57,6 +67,16 @@ public class Game extends ApplicationAdapter {
 
     private final Map<BoardObject, DrawFunc> drawingFunctions = new HashMap<>();
 
+    public Game() {
+
+        Map<Pawn, Color> pawnColorTemp = new HashMap<>();
+        pawnColorTemp.put(player0, PLAYER_0_PAWN_COLOR);
+        pawnColorTemp.put(player1, PLAYER_1_PAWN_COLOR);
+        pawnColorTemp.put(player2, PLAYER_2_PAWN_COLOR);
+        pawnColorTemp.put(player3, PLAYER_3_PAWN_COLOR);
+        pawnColors = Collections.unmodifiableMap(pawnColorTemp);
+    }
+
 	@Override
 	public void create() {
 
@@ -64,18 +84,28 @@ public class Game extends ApplicationAdapter {
 		img = new Texture("badlogic.jpg");
 
         shapeRenderer = new ShapeRenderer();
+        generateFont();
 
         camera = new OrthographicCamera(calculateViewportWidth(), calculateViewportHeight());
         camera.position.set(camera.viewportWidth / 2f, camera.viewportHeight / 2f, 0);
         camera.update();
 
         gridToWorldUnitsConverter = new GridToWorldUnitsConverter(GRID_SIZE);
-        float cellDimensions = (MIN_VIEWPORT_DIMENSION - 2f) / GRID_SIZE;
+        float cellDimensions = (MIN_VIEWPORT_DIMENSION - 2 * BOARD_MARGIN) / GRID_SIZE;
         gridToWorldUnitsConverter.setCellDimensions(cellDimensions);
-        gridToWorldUnitsConverter.setOrigin(1f, 1f);
+        gridToWorldUnitsConverter.setOrigin(BOARD_MARGIN, BOARD_MARGIN);
 
         setUpBoard();
 	}
+
+	private void generateFont() {
+
+        FreeTypeFontGenerator fontGenerator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/arial.ttf"));
+        FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
+        parameter.size = 40;
+        font = fontGenerator.generateFont(parameter);
+        fontGenerator.dispose();
+    }
 
 	private float calculateViewportWidth() {
 
@@ -110,15 +140,15 @@ public class Game extends ApplicationAdapter {
         board.moveTo(GRID_SIZE - 1, GRID_SIZE - 1, player2);
         board.moveTo(0, GRID_SIZE - 1, player3);
 
-        drawingFunctions.put(player0, (x, y) -> drawPlayer(x, y, PLAYER_0_PAWN_COLOR));
-        drawingFunctions.put(player1, (x, y) -> drawPlayer(x, y, PLAYER_1_PAWN_COLOR));
-        drawingFunctions.put(player2, (x, y) -> drawPlayer(x, y, PLAYER_2_PAWN_COLOR));
-        drawingFunctions.put(player3, (x, y) -> drawPlayer(x, y, PLAYER_3_PAWN_COLOR));
+        drawingFunctions.put(player0, (x, y) -> drawPlayerAtCell(x, y, PLAYER_0_PAWN_COLOR));
+        drawingFunctions.put(player1, (x, y) -> drawPlayerAtCell(x, y, PLAYER_1_PAWN_COLOR));
+        drawingFunctions.put(player2, (x, y) -> drawPlayerAtCell(x, y, PLAYER_2_PAWN_COLOR));
+        drawingFunctions.put(player3, (x, y) -> drawPlayerAtCell(x, y, PLAYER_3_PAWN_COLOR));
 
-        drawingFunctions.put(player0.getTrail(), ((x, y) -> drawTrail(x, y, PLAYER_0_TRAIL_COLOR)));
-        drawingFunctions.put(player1.getTrail(), ((x, y) -> drawTrail(x, y, PLAYER_1_TRAIL_COLOR)));
-        drawingFunctions.put(player2.getTrail(), ((x, y) -> drawTrail(x, y, PLAYER_2_TRAIL_COLOR)));
-        drawingFunctions.put(player3.getTrail(), ((x, y) -> drawTrail(x, y, PLAYER_3_TRAIL_COLOR)));
+        drawingFunctions.put(player0.getTrail(), ((x, y) -> drawTrailAtCell(x, y, PLAYER_0_TRAIL_COLOR)));
+        drawingFunctions.put(player1.getTrail(), ((x, y) -> drawTrailAtCell(x, y, PLAYER_1_TRAIL_COLOR)));
+        drawingFunctions.put(player2.getTrail(), ((x, y) -> drawTrailAtCell(x, y, PLAYER_2_TRAIL_COLOR)));
+        drawingFunctions.put(player3.getTrail(), ((x, y) -> drawTrailAtCell(x, y, PLAYER_3_TRAIL_COLOR)));
     }
 
     @Override
@@ -169,10 +199,6 @@ public class Game extends ApplicationAdapter {
 
     private void drawBoard() {
 
-	    // TODO remove?
-//        batch.setProjectionMatrix(camera.combined);
-//        batch.begin();
-
         shapeRenderer.setProjectionMatrix(camera.combined);
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
 
@@ -192,24 +218,28 @@ public class Game extends ApplicationAdapter {
 	    }
 
 	    shapeRenderer.end();
-//        batch.end();
     }
 
-    private void drawPlayer(int x, int y, Color color) {
+    private void drawPlayerAtCell(int x, int y, Color color) {
 
-        float worldUnitsX = gridToWorldUnitsConverter.getX(x);
-        float worldUnitsY = gridToWorldUnitsConverter.getY(y);
+        float worldUnitsX = gridToWorldUnitsConverter.getX(x) + gridToWorldUnitsConverter.getCellDimensions() * 0.5f;
+        float worldUnitsY = gridToWorldUnitsConverter.getY(y) + gridToWorldUnitsConverter.getCellDimensions() * 0.5f;
         float radius = gridToWorldUnitsConverter.getCellDimensions() * 0.375f;
+
+        drawPlayer(worldUnitsX, worldUnitsY, radius, color);
+    }
+
+    private void drawPlayer(float worldUnitsX, float worldUnitsY, float radius, Color color) {
 
         shapeRenderer.setColor(color);
         shapeRenderer.circle(
-                worldUnitsX + gridToWorldUnitsConverter.getCellDimensions() * 0.5f,
-                worldUnitsY + gridToWorldUnitsConverter.getCellDimensions() * 0.5f,
+                worldUnitsX,
+                worldUnitsY,
                 radius,
                 Math.max(1, (int)(15 * (float)Math.cbrt(radius))));
     }
 
-    private void drawTrail(int x, int y, Color color) {
+    private void drawTrailAtCell(int x, int y, Color color) {
 
         float worldUnitsX = gridToWorldUnitsConverter.getX(x);
         float worldUnitsY = gridToWorldUnitsConverter.getY(y);
@@ -227,12 +257,39 @@ public class Game extends ApplicationAdapter {
 
         List<ScoreCalculator.Score> scores = scoreCalculator.calculate(board);
 
-        System.out.println("--------");
+        float y = camera.viewportHeight - BOARD_MARGIN;
+
         for (ScoreCalculator.Score score : scores) {
 
-            System.out.println(score.getPawn().getId() + ": " + score.getScore());
+            String text = String.format(Locale.getDefault(), "%d", score.getScore());
+            GlyphLayout layout = new GlyphLayout(font, text);
+
+            // draw pawn color
+            shapeRenderer.setProjectionMatrix(camera.combined);
+            shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+            float x = (camera.viewportWidth + getEndOfBoardX() - layout.width) * 0.5f;
+            float radius = MIN_VIEWPORT_DIMENSION * 0.025f;
+            Pawn pawn = score.getPawn();
+            drawPlayer(x - radius, y - radius, radius, pawnColors.get(pawn));
+            shapeRenderer.end();
+
+            // draw score number
+            batch.setProjectionMatrix(camera.combined);
+            batch.begin();
+            font.draw(batch, text, x + MIN_VIEWPORT_DIMENSION * 0.02f, y - layout.height * 0.5f);
+            batch.end();
+            y -= layout.height + MIN_VIEWPORT_DIMENSION * 0.075f;
         }
-        System.out.println("--------");
+
+//        batch.end();
+    }
+
+    /**
+     * @return The X value where the board ends.
+     */
+    private float getEndOfBoardX() {
+
+	    return BOARD_MARGIN + gridToWorldUnitsConverter.getCellDimensions() * GRID_SIZE;
     }
 
 	@Override

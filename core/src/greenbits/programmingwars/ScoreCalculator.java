@@ -37,7 +37,15 @@ public class ScoreCalculator {
         }
     }
 
-    private static final Comparator<Score> COMPARATOR = (a, b) -> Integer.compare(b.score, a.score);
+    private static final Comparator<Score> COMPARATOR = (a, b) -> {
+
+        int scoreCmp = Integer.compare(b.score, a.score);
+        if (scoreCmp != 0) {
+            return scoreCmp;
+        }
+
+        return a.pawn.getId().compareTo(b.pawn.getId());
+    };
 
     /**
      * @return The score for each pawn in descending order.
