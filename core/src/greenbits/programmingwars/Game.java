@@ -280,8 +280,6 @@ public class Game extends ApplicationAdapter {
             batch.end();
             y -= layout.height + MIN_VIEWPORT_DIMENSION * 0.075f;
         }
-
-//        batch.end();
     }
 
     /**
