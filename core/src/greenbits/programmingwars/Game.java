@@ -10,6 +10,10 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
+
 import greenbits.programmingwars.board.Board;
 import greenbits.programmingwars.board.objects.BoardObject;
 import greenbits.programmingwars.board.objects.Pawn;
@@ -20,9 +24,15 @@ public class Game extends ApplicationAdapter {
     private static final float MIN_VIEWPORT_DIMENSION = 100f;
     private static final int GRID_SIZE = 10;
 
-    private static final Color PLAYER_1_PAWN_COLOR = Color.valueOf("#FF4500"); // orange red
+    private static final Color PLAYER_0_PAWN_COLOR = Color.RED;
+    private static final Color PLAYER_1_PAWN_COLOR = Color.GREEN;
+    private static final Color PLAYER_2_PAWN_COLOR = Color.BLUE;
+    private static final Color PLAYER_3_PAWN_COLOR = Color.YELLOW;
 
-    private static final Color PLAYER_1_TRAIL_COLOR = Color.valueOf("#FF0000");
+    private static final Color PLAYER_0_TRAIL_COLOR = Color.valueOf("#FA8072"); // salmon
+    private static final Color PLAYER_1_TRAIL_COLOR = Color.valueOf("#6B8E23"); // olive drab
+    private static final Color PLAYER_2_TRAIL_COLOR = Color.valueOf("#B0E0E6"); // powder blue
+    private static final Color PLAYER_3_TRAIL_COLOR = Color.valueOf("#F5DEB3"); // light yellow
 
 	private SpriteBatch batch;
 	private Texture img;
@@ -36,7 +46,14 @@ public class Game extends ApplicationAdapter {
     private Pawn player0 = new Pawn("Player 1", new Trail());
     private Pawn player1 = new Pawn("Player 2", new Trail());
     private Pawn player2 = new Pawn("Player 3", new Trail());
-    private Pawn player4 = new Pawn("Player 4", new Trail());
+    private Pawn player3 = new Pawn("Player 4", new Trail());
+
+    interface DrawFunc {
+
+        void draw(int x, int y);
+    }
+
+    private Map<BoardObject, DrawFunc> drawingFunctions = new HashMap<>();
 
 	@Override
 	public void create() {
@@ -86,9 +103,20 @@ public class Game extends ApplicationAdapter {
 
     private void setUpBoard() {
 
-        board.setElement(0, 2, player0);
+        board.moveTo(0, 0, player0);
+        board.moveTo(GRID_SIZE - 1, 0, player1);
+        board.moveTo(GRID_SIZE - 1, GRID_SIZE - 1, player2);
+        board.moveTo(0, GRID_SIZE - 1, player3);
 
-        // TODO put players on the board
+        drawingFunctions.put(player0, (x, y) -> drawPlayer(x, y, PLAYER_0_PAWN_COLOR));
+        drawingFunctions.put(player1, (x, y) -> drawPlayer(x, y, PLAYER_1_PAWN_COLOR));
+        drawingFunctions.put(player2, (x, y) -> drawPlayer(x, y, PLAYER_2_PAWN_COLOR));
+        drawingFunctions.put(player3, (x, y) -> drawPlayer(x, y, PLAYER_3_PAWN_COLOR));
+
+        drawingFunctions.put(player0.getTrail(), ((x, y) -> drawTrail(x, y, PLAYER_0_TRAIL_COLOR)));
+        drawingFunctions.put(player1.getTrail(), ((x, y) -> drawTrail(x, y, PLAYER_1_TRAIL_COLOR)));
+        drawingFunctions.put(player2.getTrail(), ((x, y) -> drawTrail(x, y, PLAYER_2_TRAIL_COLOR)));
+        drawingFunctions.put(player3.getTrail(), ((x, y) -> drawTrail(x, y, PLAYER_3_TRAIL_COLOR)));
     }
 
     @Override
@@ -149,15 +177,13 @@ public class Game extends ApplicationAdapter {
 
 	        for (int y = 0; y < board.getBoardSize(); ++y) {
 
-                BoardObject boardObject = board.getElement(x, y);
+                Set<BoardObject> boardObjects = board.getElement(x, y);
+                for (BoardObject boardObject : boardObjects) {
 
-                // TODO add more conditions here
-                if (boardObject == player0) {
-
-                    drawPlayer(x, y, PLAYER_1_PAWN_COLOR);
-
-                    // TODO remove?
-//                    batch.draw(img, worldUnitsX, worldUnitsX, gridToWorldUnitsConverter.getCellDimensions(), gridToWorldUnitsConverter.getCellDimensions());
+                    DrawFunc drawFunc = drawingFunctions.get(boardObject);
+                    if (drawFunc != null) {
+                        drawFunc.draw(x, y);
+                    }
                 }
             }
 	    }
@@ -177,8 +203,22 @@ public class Game extends ApplicationAdapter {
                 worldUnitsX + gridToWorldUnitsConverter.getCellDimensions() * 0.5f,
                 worldUnitsY + gridToWorldUnitsConverter.getCellDimensions() * 0.5f,
                 radius,
-                Math.max(1, (int)(10 * (float)Math.cbrt(radius))));
+                Math.max(1, (int)(15 * (float)Math.cbrt(radius))));
     }
+
+    private void drawTrail(int x, int y, Color color) {
+
+        float worldUnitsX = gridToWorldUnitsConverter.getX(x);
+        float worldUnitsY = gridToWorldUnitsConverter.getY(y);
+        float widthHeight = gridToWorldUnitsConverter.getCellDimensions() * 0.95f;
+
+        shapeRenderer.setColor(color);
+        shapeRenderer.rect(
+                worldUnitsX + gridToWorldUnitsConverter.getCellDimensions() * 0.5f - widthHeight * 0.5f,
+                worldUnitsY + gridToWorldUnitsConverter.getCellDimensions() * 0.5f - widthHeight * 0.5f,
+                widthHeight,
+                widthHeight);
+	}
 
 	@Override
 	public void dispose() {
