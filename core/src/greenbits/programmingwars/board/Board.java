@@ -5,7 +5,6 @@ import greenbits.programmingwars.board.objects.BoardObject;
 public class Board {
 
     private final int boardSize;
-
     private final BoardObject[] board;
 
     public Board(int boardSize) {
@@ -14,21 +13,21 @@ public class Board {
         board = new BoardObject[boardSize * boardSize];
     }
 
-    public BoardObject getElement(int row, int column) {
+    public BoardObject getElement(int x, int y) {
 
-        validateDimension("row", row);
-        validateDimension("column", column);
+        validateDimension("x", x);
+        validateDimension("y", y);
 
-        int index = row * boardSize + column;
+        int index = y * boardSize + x;
         return board[index];
     }
 
-    public void setElement(int row, int column, BoardObject element) {
+    public void setElement(int x, int y, BoardObject element) {
 
-        validateDimension("row", row);
-        validateDimension("column", column);
+        validateDimension("x", x);
+        validateDimension("y", y);
 
-        int index = row * boardSize + column;
+        int index = y * boardSize + x;
         board[index] = element;
     }
 
@@ -37,6 +36,11 @@ public class Board {
         if (dimension < 0 || dimension >= boardSize) {
             throw new RuntimeException(String.format("%s must be in the range [0, %d) but was %d.", str, boardSize, dimension));
         }
+    }
+
+    public int getBoardSize() {
+
+        return boardSize;
     }
 }
 
