@@ -83,6 +83,23 @@ public class Board {
 
         return boardSize;
     }
+
+    public Set<Pawn> getPawns() {
+
+        Set<Pawn> pawns = new HashSet<>();
+
+        for (Set<BoardObject> boardObjects : board) {
+
+            for (BoardObject boardObject : boardObjects) {
+
+                if (boardObject instanceof Pawn) {
+                    pawns.add(((Pawn) boardObject));
+                }
+            }
+        }
+
+        return pawns;
+    }
 }
 
 // TODO convert from index to (row, col):

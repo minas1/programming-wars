@@ -11,6 +11,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -42,6 +43,7 @@ public class Game extends ApplicationAdapter {
 
     private Board board = new Board(GRID_SIZE);
     private GridToWorldUnitsConverter gridToWorldUnitsConverter;
+    private final ScoreCalculator scoreCalculator = new ScoreCalculator();
 
     private Pawn player0 = new Pawn("Player 1", new Trail());
     private Pawn player1 = new Pawn("Player 2", new Trail());
@@ -53,7 +55,7 @@ public class Game extends ApplicationAdapter {
         void draw(int x, int y);
     }
 
-    private Map<BoardObject, DrawFunc> drawingFunctions = new HashMap<>();
+    private final Map<BoardObject, DrawFunc> drawingFunctions = new HashMap<>();
 
 	@Override
 	public void create() {
@@ -139,6 +141,7 @@ public class Game extends ApplicationAdapter {
 
         drawGrid();
         drawBoard();
+        drawScore();
 	}
 
 	private void drawGrid() {
@@ -219,6 +222,18 @@ public class Game extends ApplicationAdapter {
                 widthHeight,
                 widthHeight);
 	}
+
+	private void drawScore() {
+
+        List<ScoreCalculator.Score> scores = scoreCalculator.calculate(board);
+
+        System.out.println("--------");
+        for (ScoreCalculator.Score score : scores) {
+
+            System.out.println(score.getPawn().getId() + ": " + score.getScore());
+        }
+        System.out.println("--------");
+    }
 
 	@Override
 	public void dispose() {
