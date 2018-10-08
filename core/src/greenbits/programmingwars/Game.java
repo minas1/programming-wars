@@ -18,8 +18,11 @@ import greenbits.programmingwars.board.objects.Trail;
 public class Game extends ApplicationAdapter {
 
     private static final float MIN_VIEWPORT_DIMENSION = 100f;
-
     private static final int GRID_SIZE = 10;
+
+    private static final Color PLAYER_1_PAWN_COLOR = Color.valueOf("#FF4500"); // orange red
+
+    private static final Color PLAYER_1_TRAIL_COLOR = Color.valueOf("#FF0000");
 
 	private SpriteBatch batch;
 	private Texture img;
@@ -83,8 +86,6 @@ public class Game extends ApplicationAdapter {
 
     private void setUpBoard() {
 
-
-
         board.setElement(0, 2, player0);
 
         // TODO put players on the board
@@ -110,14 +111,13 @@ public class Game extends ApplicationAdapter {
 
         drawGrid();
         drawBoard();
-
-
 	}
 
 	private void drawGrid() {
 
 	    shapeRenderer.setProjectionMatrix(camera.combined);
         shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
+        shapeRenderer.setColor(Color.WHITE);
 
         // horizontal
         for (int i = 0; i < GRID_SIZE + 1; ++i) {
@@ -138,8 +138,12 @@ public class Game extends ApplicationAdapter {
 
     private void drawBoard() {
 
-        batch.setProjectionMatrix(camera.combined);
-        batch.begin();
+	    // TODO remove?
+//        batch.setProjectionMatrix(camera.combined);
+//        batch.begin();
+
+        shapeRenderer.setProjectionMatrix(camera.combined);
+        shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
 
 	    for (int x = 0; x < board.getBoardSize(); ++x) {
 
@@ -150,12 +154,30 @@ public class Game extends ApplicationAdapter {
                 // TODO add more conditions here
                 if (boardObject == player0) {
 
-                    batch.draw(img, gridToWorldUnitsConverter.getX(x), gridToWorldUnitsConverter.getY(y), gridToWorldUnitsConverter.getCellDimensions(), gridToWorldUnitsConverter.getCellDimensions());
+                    drawPlayer(x, y, PLAYER_1_PAWN_COLOR);
+
+                    // TODO remove?
+//                    batch.draw(img, worldUnitsX, worldUnitsX, gridToWorldUnitsConverter.getCellDimensions(), gridToWorldUnitsConverter.getCellDimensions());
                 }
             }
 	    }
 
-        batch.end();
+	    shapeRenderer.end();
+//        batch.end();
+    }
+
+    private void drawPlayer(int x, int y, Color color) {
+
+        float worldUnitsX = gridToWorldUnitsConverter.getX(x);
+        float worldUnitsY = gridToWorldUnitsConverter.getY(y);
+        float radius = gridToWorldUnitsConverter.getCellDimensions() * 0.375f;
+
+        shapeRenderer.setColor(color);
+        shapeRenderer.circle(
+                worldUnitsX + gridToWorldUnitsConverter.getCellDimensions() * 0.5f,
+                worldUnitsY + gridToWorldUnitsConverter.getCellDimensions() * 0.5f,
+                radius,
+                Math.max(1, (int)(10 * (float)Math.cbrt(radius))));
     }
 
 	@Override
