@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import greenbits.programmingwars.board.Board;
+import greenbits.programmingwars.board.MutableBoard;
 import greenbits.programmingwars.board.objects.BoardObject;
 import greenbits.programmingwars.board.objects.Pawn;
 import greenbits.programmingwars.board.objects.Trail;
@@ -50,14 +50,14 @@ public class ScoreCalculator {
     /**
      * @return The score for each pawn in descending order.
      */
-    public List<Score> calculate(Board board) {
+    public List<Score> calculate(MutableBoard board) {
 
         Set<Pawn> pawns = board.getPawns();
         Map<Pawn, Integer> scores = initScoreMap(board, pawns);
 
         for (int i = 0; i < board.getBoardSize(); ++i) {
             for (int j = 0; j < board.getBoardSize(); ++j) {
-                for (BoardObject boardObject : board.getElement(i, j)) {
+                for (BoardObject boardObject : board.getElementsAt(i, j)) {
 
                     if (!(boardObject instanceof Trail)) {
                         continue;
@@ -79,7 +79,7 @@ public class ScoreCalculator {
         return scoreList;
     }
 
-    private Map<Pawn, Integer> initScoreMap(Board board, Set<Pawn> pawns) {
+    private Map<Pawn, Integer> initScoreMap(MutableBoard board, Set<Pawn> pawns) {
 
         Map<Pawn, Integer> scores = new HashMap<>();
 

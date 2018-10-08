@@ -6,7 +6,6 @@ import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -20,7 +19,12 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
-import greenbits.programmingwars.board.Board;
+import greenbits.programmingwars.behavior.Player0Behavior;
+import greenbits.programmingwars.behavior.Player1Behavior;
+import greenbits.programmingwars.behavior.Player2Behavior;
+import greenbits.programmingwars.behavior.Player3Behavior;
+import greenbits.programmingwars.board.MutableBoard;
+import greenbits.programmingwars.board.GameSimulator;
 import greenbits.programmingwars.board.objects.BoardObject;
 import greenbits.programmingwars.board.objects.Pawn;
 import greenbits.programmingwars.board.objects.Trail;
@@ -28,9 +32,8 @@ import greenbits.programmingwars.board.objects.Trail;
 public class Game extends ApplicationAdapter {
 
     private static final float MIN_VIEWPORT_DIMENSION = 1000f;
-    private static final int GRID_SIZE = 10;
-
     private static final float BOARD_MARGIN = MIN_VIEWPORT_DIMENSION / 100f;
+    private static final int GRID_SIZE = 10;
 
     private static final Color PLAYER_0_PAWN_COLOR = Color.RED;
     private static final Color PLAYER_1_PAWN_COLOR = Color.GREEN;
@@ -45,13 +48,12 @@ public class Game extends ApplicationAdapter {
     private final Map<Pawn, Color> pawnColors;
 
 	private SpriteBatch batch;
-	private Texture img;
 
     private ShapeRenderer shapeRenderer;
     private Camera camera;
     private BitmapFont font;
 
-    private Board board = new Board(GRID_SIZE);
+    private MutableBoard board = new MutableBoard(GRID_SIZE);
     private GridToWorldUnitsConverter gridToWorldUnitsConverter;
     private final ScoreCalculator scoreCalculator = new ScoreCalculator();
 
@@ -59,6 +61,8 @@ public class Game extends ApplicationAdapter {
     private Pawn player1 = new Pawn("Player 2", new Trail());
     private Pawn player2 = new Pawn("Player 3", new Trail());
     private Pawn player3 = new Pawn("Player 4", new Trail());
+
+    private final GameSimulator gameSimulator = new GameSimulator(board);
 
     interface DrawFunc {
 
@@ -75,13 +79,17 @@ public class Game extends ApplicationAdapter {
         pawnColorTemp.put(player2, PLAYER_2_PAWN_COLOR);
         pawnColorTemp.put(player3, PLAYER_3_PAWN_COLOR);
         pawnColors = Collections.unmodifiableMap(pawnColorTemp);
+
+        gameSimulator.addPlayer(player0, new Player0Behavior());
+        gameSimulator.addPlayer(player1, new Player1Behavior());
+        gameSimulator.addPlayer(player2, new Player2Behavior());
+        gameSimulator.addPlayer(player3, new Player3Behavior());
     }
 
 	@Override
 	public void create() {
 
 		batch = new SpriteBatch();
-		img = new Texture("badlogic.jpg");
 
         shapeRenderer = new ShapeRenderer();
         generateFont();
@@ -163,6 +171,8 @@ public class Game extends ApplicationAdapter {
     @Override
 	public void render() {
 
+        gameSimulator.update(Gdx.graphics.getDeltaTime());
+
 	    camera.update();
 
 	    Color clearColor = Color.ROYAL;
@@ -206,7 +216,7 @@ public class Game extends ApplicationAdapter {
 
 	        for (int y = 0; y < board.getBoardSize(); ++y) {
 
-                Set<BoardObject> boardObjects = board.getElement(x, y);
+                Set<BoardObject> boardObjects = board.getElementsAt(x, y);
                 for (BoardObject boardObject : boardObjects) {
 
                     DrawFunc drawFunc = drawingFunctions.get(boardObject);
@@ -294,7 +304,6 @@ public class Game extends ApplicationAdapter {
 	public void dispose() {
 
 		batch.dispose();
-		img.dispose();
 		shapeRenderer.dispose();
 	}
 }
