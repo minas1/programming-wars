@@ -12,7 +12,9 @@ public class GameSimulator {
     /**
      * Time for each pawn to move, in seconds.
      */
-    private static final float TIME_TO_MOVE_PAWN = 0.25f;
+    private static final float TIME_TO_MOVE_PAWN = 0.1f;
+
+    private static final int TOTAL_ROUNDS = 100;
 
     private final List<Pawn> players = new ArrayList<>();
     private final List<MovementBehavior> movementBehaviors = new ArrayList<>();
@@ -20,6 +22,8 @@ public class GameSimulator {
 
     private int nextPlayerToMove = 0;
     private float remainingTimeToMove = TIME_TO_MOVE_PAWN;
+
+    private int remainingRounds = TOTAL_ROUNDS;
 
     public GameSimulator(MutableBoard board) {
 
@@ -34,6 +38,10 @@ public class GameSimulator {
 
     public void update(float dt) {
 
+        if (!isGameInProgress()) {
+            return;
+        }
+
         remainingTimeToMove -= dt;
         if (remainingTimeToMove <= 0f) {
 
@@ -45,6 +53,10 @@ public class GameSimulator {
 
             applyMovement(pawn, currentPosition, movementOffset);
             nextPlayerToMove = (nextPlayerToMove + 1) % players.size();
+
+            if (nextPlayerToMove == 0) {
+                --remainingRounds;
+            }
         }
     }
 
@@ -60,5 +72,15 @@ public class GameSimulator {
                 board.moveTo(newX, newY, pawn);
             }
         }
+    }
+
+    private boolean isGameInProgress() {
+
+        return remainingRounds > 0;
+    }
+
+    public int getRemainingRounds() {
+
+        return remainingRounds;
     }
 }

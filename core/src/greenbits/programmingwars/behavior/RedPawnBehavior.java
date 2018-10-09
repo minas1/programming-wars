@@ -43,7 +43,6 @@ public class RedPawnBehavior implements MovementBehavior {
                 continue;
             }
 
-            System.out.println("Returning " + offset);
             return offset;
         }
 

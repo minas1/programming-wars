@@ -182,6 +182,7 @@ public class Game extends ApplicationAdapter {
         drawGrid();
         drawBoard();
         drawScore();
+        drawRemainingRounds();
 	}
 
 	private void drawGrid() {
@@ -290,6 +291,17 @@ public class Game extends ApplicationAdapter {
             batch.end();
             y -= layout.height + MIN_VIEWPORT_DIMENSION * 0.075f;
         }
+    }
+
+    private void drawRemainingRounds() {
+
+        String text = "Rounds Left: " + gameSimulator.getRemainingRounds();
+        GlyphLayout layout = new GlyphLayout(font, text);
+
+        batch.setProjectionMatrix(camera.combined);
+        batch.begin();
+        font.draw(batch, text, (camera.viewportWidth + getEndOfBoardX() - layout.width) * 0.5f, camera.viewportHeight * 0.5f);
+        batch.end();
     }
 
     /**
