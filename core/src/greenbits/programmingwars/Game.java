@@ -21,7 +21,7 @@ import java.util.Set;
 
 import greenbits.programmingwars.behavior.RedPawnBehavior;
 import greenbits.programmingwars.behavior.GreenPawnBehavior;
-import greenbits.programmingwars.behavior.BlueTeamBehavior;
+import greenbits.programmingwars.behavior.BluePawnBehavior;
 import greenbits.programmingwars.behavior.YellowPawnBehavior;
 import greenbits.programmingwars.board.MutableBoard;
 import greenbits.programmingwars.board.GameSimulator;
@@ -82,7 +82,7 @@ public class Game extends ApplicationAdapter {
 
         gameSimulator.addPlayer(player0, new RedPawnBehavior());
         gameSimulator.addPlayer(player1, new GreenPawnBehavior());
-        gameSimulator.addPlayer(player2, new BlueTeamBehavior());
+        gameSimulator.addPlayer(player2, new BluePawnBehavior());
         gameSimulator.addPlayer(player3, new YellowPawnBehavior());
     }
 
