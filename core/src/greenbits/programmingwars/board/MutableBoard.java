@@ -36,9 +36,7 @@ public class MutableBoard implements Board {
         return board[index];
     }
 
-    /**
-     * @return The pawn at the given position or {@code null}. Remember that at each cell at most one pawn can exist.
-     */
+    @Override
     public Pawn getPawnAt(int x, int y) {
 
         Set<BoardObject> boardObjects = getElementsAt(x, y);
@@ -139,5 +137,19 @@ public class MutableBoard implements Board {
     public boolean isInsideBoard(int x, int y) {
 
         return x >= 0 && x < boardSize && y >= 0 && y < boardSize;
+    }
+
+    @Override
+    public Trail getTrailAt(int x, int y) {
+
+        Set<BoardObject> boardObjects = getElementsAt(x, y);
+
+        for (BoardObject boardObject : boardObjects) {
+            if (boardObject instanceof Trail) {
+                return (Trail) boardObject;
+            }
+        }
+
+        return null;
     }
 }

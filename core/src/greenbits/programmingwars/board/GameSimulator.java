@@ -12,7 +12,7 @@ public class GameSimulator {
     /**
      * Time for each pawn to move, in seconds.
      */
-    private static final float TIME_TO_MOVE_PAWN = 0.1f;
+    private static final float TIME_TO_MOVE_PAWN = 0.25f;
 
     private final List<Pawn> players = new ArrayList<>();
     private final List<MovementBehavior> movementBehaviors = new ArrayList<>();
