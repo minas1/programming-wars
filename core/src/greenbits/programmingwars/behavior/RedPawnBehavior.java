@@ -14,8 +14,6 @@ public class RedPawnBehavior implements MovementBehavior {
 
         List<MovementOffset> possible = new ArrayList<>();
 
-        System.out.println(new MovementOffset(0, -0));
-
         possible.add(new MovementOffset(-1, 1));
         possible.add(new MovementOffset(-1, 0));
         possible.add(new MovementOffset(-1, 1));
@@ -41,6 +39,11 @@ public class RedPawnBehavior implements MovementBehavior {
                 continue;
             }
 
+            if (board.getTrailAt(newPosition) == getOwnTrail(board, currentPosition)) {
+                continue;
+            }
+
+            System.out.println("Returning " + offset);
             return offset;
         }
 
