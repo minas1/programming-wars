@@ -19,10 +19,10 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
-import greenbits.programmingwars.behavior.Player0Behavior;
-import greenbits.programmingwars.behavior.Player1Behavior;
-import greenbits.programmingwars.behavior.Player2Behavior;
-import greenbits.programmingwars.behavior.Player3Behavior;
+import greenbits.programmingwars.behavior.RedPawnBehavior;
+import greenbits.programmingwars.behavior.GreenPawnBehavior;
+import greenbits.programmingwars.behavior.BlueTeamBehavior;
+import greenbits.programmingwars.behavior.YellowPawnBehavior;
 import greenbits.programmingwars.board.MutableBoard;
 import greenbits.programmingwars.board.GameSimulator;
 import greenbits.programmingwars.board.objects.BoardObject;
@@ -57,10 +57,10 @@ public class Game extends ApplicationAdapter {
     private GridToWorldUnitsConverter gridToWorldUnitsConverter;
     private final ScoreCalculator scoreCalculator = new ScoreCalculator();
 
-    private Pawn player0 = new Pawn("Player 1", new Trail());
-    private Pawn player1 = new Pawn("Player 2", new Trail());
-    private Pawn player2 = new Pawn("Player 3", new Trail());
-    private Pawn player3 = new Pawn("Player 4", new Trail());
+    private Pawn player0 = new Pawn("Red", new Trail());
+    private Pawn player1 = new Pawn("Green", new Trail());
+    private Pawn player2 = new Pawn("Blue", new Trail());
+    private Pawn player3 = new Pawn("Yellow", new Trail());
 
     private final GameSimulator gameSimulator = new GameSimulator(board);
 
@@ -80,10 +80,10 @@ public class Game extends ApplicationAdapter {
         pawnColorTemp.put(player3, PLAYER_3_PAWN_COLOR);
         pawnColors = Collections.unmodifiableMap(pawnColorTemp);
 
-        gameSimulator.addPlayer(player0, new Player0Behavior());
-        gameSimulator.addPlayer(player1, new Player1Behavior());
-        gameSimulator.addPlayer(player2, new Player2Behavior());
-        gameSimulator.addPlayer(player3, new Player3Behavior());
+        gameSimulator.addPlayer(player0, new RedPawnBehavior());
+        gameSimulator.addPlayer(player1, new GreenPawnBehavior());
+        gameSimulator.addPlayer(player2, new BlueTeamBehavior());
+        gameSimulator.addPlayer(player3, new YellowPawnBehavior());
     }
 
 	@Override

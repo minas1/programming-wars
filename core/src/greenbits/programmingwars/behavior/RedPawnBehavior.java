@@ -7,12 +7,14 @@ import java.util.List;
 import greenbits.programmingwars.board.Board;
 import greenbits.programmingwars.board.BoardPosition;
 
-public class Player0Behavior implements MovementBehavior {
+public class RedPawnBehavior implements MovementBehavior {
 
     @Override
     public MovementOffset getMove(Board board, BoardPosition currentPosition) {
 
         List<MovementOffset> possible = new ArrayList<>();
+
+        System.out.println(new MovementOffset(0, -0));
 
         possible.add(new MovementOffset(-1, 1));
         possible.add(new MovementOffset(-1, 0));

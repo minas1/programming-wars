@@ -3,7 +3,7 @@ package greenbits.programmingwars.behavior;
 import greenbits.programmingwars.board.Board;
 import greenbits.programmingwars.board.BoardPosition;
 
-public class Player1Behavior implements MovementBehavior {
+public class GreenPawnBehavior implements MovementBehavior {
 
     @Override
     public MovementOffset getMove(Board board, BoardPosition currentPosition) {
