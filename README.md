@@ -15,6 +15,8 @@ When a pawn visits a cell, it paints it with its color. For example, as the yell
 The winner of the game is the pawn that has covered the most cells with its color after 100 rounds, which is where the game ends.
 The score is calculated by simply counting the number of cells with each pawn's color.
 
+![screenshot](screenshots/screenshot_0.png)
+
 ## How can this be used for a Code Kata?
 ### Implementation
 Represent each pawn with a team of 2-3 people. Each team will be responsible for coding the moving behavior of its own pawn, competing with the rest of the teams for the highest score.
@@ -36,7 +38,7 @@ In each behavior the teams will need to implement the `getMove(Board, BoardPosit
 ### How to perform the kata
 
 ## Requirements
-* Android Studio (required because the project use libGDX, a cross platform game engine for Desktop, Android, iOS and web)
+* Android Studio (required because the project uses libGDX, a cross platform game engine for Desktop, Android, iOS and web)
 
 To be able to run the project, you will need to create a _Run configuration_ within the IDE.
 Follow the tutorial [here](https://github.com/libgdx/libgdx/wiki/Gradle-and-Intellij-IDEA) to do so. The easiest one to choose is the **Desktop** configuration.
